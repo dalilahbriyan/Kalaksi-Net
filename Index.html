@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalaksi Net - Simulator Subnetting & Bandwidth TJKT</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        butter: {
+                            50: '#FFFDF0',
+                            100: '#FFF8D6',
+                            200: '#FEF08A',
+                            300: '#FDE047',
+                            400: '#FACC15',
+                            500: '#EAB308',
+                        },
+                        baby: {
+                            50: '#F0F9FF',
+                            100: '#E0F2FE',
+                            200: '#BAE6FD',
+                            300: '#7DD3FC',
+                            400: '#38BDF8',
+                            500: '#0EA5E9',
+                            600: '#0284C7',
+                            700: '#0369A1',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #BAE6FD;
+            border-radius: 4px;
+        }
+        .touch-ripple:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body class="h-full flex justify-center items-center p-0 md:p-4 bg-slate-200">
+
+    <!-- Mobile Screen Frame Container -->
+    <div class="w-full max-w-md h-full md:h-[90vh] md:max-h-[850px] bg-white md:rounded-[36px] shadow-2xl flex flex-col overflow-hidden relative border-0 md:border-8 md:border-slate-800">
+        
+        <!-- Android Status Bar Mockup -->
+        <div class="bg-baby-100 px-5 py-1.5 flex justify-between items-center text-xs font-semibold text-slate-700 select-none border-b border-baby-200">
+            <span id="android-clock">10:00</span>
+            <div class="flex items-center space-x-2 text-slate-600">
+                <i data-lucide="wifi" class="w-3.5 h-3.5 text-baby-600"></i>
+                <i data-lucide="signal" class="w-3.5 h-3.5"></i>
+                <i data-lucide="battery-charging" class="w-4 h-4 text-emerald-600"></i>
+            </div>
+        </div>
+
+        <!-- Android Header / Action Bar -->
+        <header class="bg-gradient-to-r from-baby-100 via-butter-100 to-baby-200 px-4 py-3 border-b border-baby-200 flex items-center justify-between shadow-sm sticky top-0 z-20">
+            <div class="flex items-center space-x-2.5">
+                <!-- Dynamic Back Button -->
+                <button id="btn-back" onclick="showDashboard()" class="hidden p-1.5 rounded-full hover:bg-white/80 active:bg-white text-slate-700 transition shadow-xs">
+                    <i data-lucide="arrow-left" class="w-5 h-5 text-baby-700"></i>
+                </button>
+                <div class="w-8 h-8 rounded-xl bg-butter-300 border border-butter-400 flex items-center justify-center font-black text-slate-800 text-xs shadow-xs" id="app-logo-box">
+                    KN
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-sm text-slate-800 leading-tight" id="header-title">Kalaksi Net</h1>
+                    <p class="text-[10px] font-medium text-slate-500" id="header-subtitle">Simulator Subnetting & Bandwidth TJKT</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-1">
+                <span class="text-[10px] font-bold bg-baby-500 text-white px-2 py-0.5 rounded-full shadow-xs">OFFLINE</span>
+            </div>
+        </header>
+
+        <!-- Main Scrollable Content Workspace -->
+        <main class="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50/60" id="main-scroll-area">
+
+            <!-- 0. HOME DASHBOARD / MAIN MENU (Initial Screen Visible Only) -->
+            <section id="mod-dashboard" class="module-view space-y-4">
+                
+                <!-- Welcome Card -->
+                <div class="bg-gradient-to-br from-butter-100 via-butter-50 to-baby-100 p-4 rounded-2xl border border-butter-200 shadow-sm relative overflow-hidden">
+                    <div class="absolute -right-3 -bottom-3 opacity-15 text-baby-600">
+                        <i data-lucide="cpu" class="w-28 h-28"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <span class="text-[10px] font-extrabold uppercase bg-butter-300 text-amber-900 px-2 py-0.5 rounded-md inline-block mb-1">Kelas XI TJKT</span>
+                        <h2 class="font-extrabold text-base text-slate-800">Selamat Datang di Kalaksi Net!</h2>
+                        <p class="text-xs text-slate-600 mt-1 leading-relaxed">Pilih modul pembelajaran atau simulasi di bawah untuk mulai belajar IP Address, Subnetting, dan Bandwidth.</p>
+                    </div>
+                </div>
+
+                <!-- Main Menu Grid Cards (6 ITEMS) -->
+                <div class="grid grid-cols-1 gap-3">
+
+                    <!-- Card 1: Materi Lengkap (PRIMARY HIGHLIGHT) -->
+                    <button onclick="openModule('mod-materi', 'Materi Lengkap Jaringan', 'Teori IP, Subnetting & Bandwidth')" 
+                        class="touch-ripple text-left bg-gradient-to-r from-butter-200 via-butter-100 to-baby-100 p-4 rounded-2xl border-2 border-butter-300 hover:border-baby-400 shadow-sm hover:shadow-md transition flex items-center justify-between group">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-white text-baby-700 border border-butter-300 flex items-center justify-center font-bold text-lg group-hover:scale-105 transition shadow-sm">
+                                <i data-lucide="book-open" class="w-6 h-6 text-baby-600"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-1.5">
+                                    <h3 class="font-extrabold text-sm text-slate-900">1. Materi Lengkap</h3>
+                                    <span class="text-[9px] uppercase font-bold bg-baby-500 text-white px-1.5 py-0.2 rounded-md">UTAMA</span>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-0.5">Konsep IP IPv4, CIDR, VLSM & Bandwidth</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-baby-600 group-hover:translate-x-1 transition"></i>
+                    </button>
+
+                    <!-- Card 2: IP Subnetting Calculator -->
+                    <button onclick="openModule('mod-subnetting', 'Subnetting CIDR/FLSM', 'Hitung Subnetting IPv4')" 
+                        class="touch-ripple text-left bg-white p-4 rounded-2xl border border-baby-200 hover:border-baby-300 shadow-sm hover:shadow-md transition flex items-center justify-between group">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-butter-100 text-amber-700 border border-butter-300 flex items-center justify-center font-bold text-lg group-hover:bg-butter-200 transition">
+                                <i data-lucide="calculator" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">2. Kalkulator Subnetting</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">CIDR, Netmask, Range Host, & Biner</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-baby-400 group-hover:translate-x-1 transition"></i>
+                    </button>
+
+                    <!-- Card 3: VLSM Calculator -->
+                    <button onclick="openModule('mod-vlsm', 'Kalkulator VLSM', 'Alokasi Subnet Bertingkat')" 
+                        class="touch-ripple text-left bg-white p-4 rounded-2xl border border-baby-200 hover:border-baby-300 shadow-sm hover:shadow-md transition flex items-center justify-between group">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-baby-100 text-baby-700 border border-baby-300 flex items-center justify-center font-bold text-lg group-hover:bg-baby-200 transition">
+                                <i data-lucide="layers" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">3. Kalkulator VLSM</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Pembagian IP optimal per ruangan/lab</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-baby-400 group-hover:translate-x-1 transition"></i>
+                    </button>
+
+                    <!-- Card 4: Bandwidth & Download Estimator -->
+                    <button onclick="openModule('mod-bandwidth', 'Estimator Bandwidth', 'Perhitungan Throughput Lab')" 
+                        class="touch-ripple text-left bg-white p-4 rounded-2xl border border-baby-200 hover:border-baby-300 shadow-sm hover:shadow-md transition flex items-center justify-between group">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center font-bold text-lg group-hover:bg-emerald-100 transition">
+                                <i data-lucide="activity" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">4. Estimator Bandwidth</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Analisis kebutuhan troughput & durasi unduh</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-baby-400 group-hover:translate-x-1 transition"></i>
+                    </button>
+
+                    <!-- Card 5: 8-Bit Interactive Binary Visualizer -->
+                    <button onclick="openModule('mod-binary', 'Visualisator Biner', 'Saklar Bit Biner Interaktif')" 
+                        class="touch-ripple text-left bg-white p-4 rounded-2xl border border-baby-200 hover:border-baby-300 shadow-sm hover:shadow-md transition flex items-center justify-between group">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center font-bold text-lg group-hover:bg-purple-100 transition">
+                                <i data-lucide="binary" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-sm text-slate-800">5. Visualisator Biner 8-Bit</h3>
+                                <p class="text-xs text-slate-500 mt-0.5">Simulasi saklar bit 128..1 desimal live</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-baby-400 group-hover:translate-x-1 transition"></i>
+                    </button>
+
+                    <!-- Card 6: Practice Quiz Bank (50 Questions) -->
+                    <button onclick="openModule('mod-quiz', 'Latihan Mandiri 50 Soal', 'Uji Pemahaman Jaringan')" 
+                        class="touch-ripple text-left bg-gradient-to-r from-butter-100 to-baby-100 p-4 rounded-2xl border border-butter-300 hover:border-baby-400 shadow-sm hover:shadow-md transition flex items-center justify-between group">
+                        <div class="flex items-center space-x-3.5">
+                            <div class="w-11 h-11 rounded-xl bg-white text-slate-800 border border-butter-300 flex items-center justify-center font-bold text-lg shadow-sm">
+                                <i data-lucide="help-circle" class="w-6 h-6 text-baby-600"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-bold text-sm text-slate-800">6. Latihan Mandiri</h3>
+                                    <span class="text-[9px] font-extrabold bg-amber-200 text-amber-800 px-1.5 py-0.5 rounded">50 SOAL</span>
+                                </div>
+                                <p class="text-xs text-slate-600 mt-0.5">Bank Soal Komprehensif + Pembahasan</p>
+                            </div>
+                        </div>
+                        <i data-lucide="chevron-right" class="w-5 h-5 text-baby-600 group-hover:translate-x-1 transition"></i>
+                    </button>
+
+                </div>
+
+                <!-- App Credit -->
+                <div class="text-center pt-2">
+                    <p class="text-[11px] text-slate-400">Kalaksi Net v2.0 • Disdik Sulsel 2026</p>
+                </div>
+
+            </section>
+
+            <!-- 1. MODULE: COMPREHENSIVE LEARNING MATERIAL -->
+            <section id="mod-materi" class="module-view space-y-4 hidden">
+                
+                <!-- Sub-tab Bar -->
+                <div class="flex overflow-x-auto gap-1.5 p-1 bg-baby-50 border border-baby-200 rounded-2xl scrollbar-none">
+                    <button onclick="switchMaterialTab('materi-ip')" id="tab-btn-materi-ip" class="mat-tab-btn flex-1 min-w-[85px] py-2 px-2 rounded-xl text-xs font-bold text-center transition bg-baby-500 text-white shadow-sm">
+                        IPv4
+                    </button>
+                    <button onclick="switchMaterialTab('materi-subnetting')" id="tab-btn-materi-subnetting" class="mat-tab-btn flex-1 min-w-[85px] py-2 px-2 rounded-xl text-xs font-bold text-center transition bg-white text-slate-600 hover:bg-baby-100">
+                        Subnetting
+                    </button>
+                    <button onclick="switchMaterialTab('materi-vlsm')" id="tab-btn-materi-vlsm" class="mat-tab-btn flex-1 min-w-[85px] py-2 px-2 rounded-xl text-xs font-bold text-center transition bg-white text-slate-600 hover:bg-baby-100">
+                        VLSM
+                    </button>
+                    <button onclick="switchMaterialTab('materi-bandwidth')" id="tab-btn-materi-bandwidth" class="mat-tab-btn flex-1 min-w-[85px] py-2 px-2 rounded-xl text-xs font-bold text-center transition bg-white text-slate-600 hover:bg-baby-100">
+                        Bandwidth
+                    </button>
+                </div>
+
+                <!-- SUB-TAB 1: IPv4 FUNDAMENTALS -->
+                <div id="materi-ip" class="material-content-panel space-y-3">
+                    <div class="bg-white border border-baby-200 rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="flex items-center space-x-2 border-b border-baby-100 pb-2">
+                            <i data-lucide="network" class="w-5 h-5 text-baby-600"></i>
+                            <h2 class="font-extrabold text-sm text-slate-800">1. Konsep Alamat IP (IPv4)</h2>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Alamat IP (Internet Protocol Address)</strong> adalah identitas numerik yang diberikan kepada setiap perangkat (komputer, HP, router) yang terhubung ke jaringan berbasis TCP/IP.
+                        </p>
+                        
+                        <div class="bg-butter-50 p-3 rounded-xl border border-butter-200 text-xs space-y-1">
+                            <h3 class="font-bold text-amber-900">Struktur Bit IPv4:</h3>
+                            <ul class="list-disc list-inside text-slate-700 space-y-1">
+                                <li>Panjang total: <strong>32 bit biner</strong>.</li>
+                                <li>Dibagi menjadi <strong>4 Oktet</strong> (tiap oktet = 8 bit).</li>
+                                <li>Format desimal titik: <code class="bg-white px-1 py-0.5 rounded font-mono font-bold text-baby-700 border">192.168.10.1</code></li>
+                            </ul>
+                        </div>
+
+                        <!-- Class Table -->
+                        <div class="space-y-1.5">
+                            <h3 class="text-xs font-bold text-slate-800">Pembagian Kelas IP (Classful):</h3>
+                            <div class="overflow-x-auto border border-baby-200 rounded-xl">
+                                <table class="w-full text-left text-[11px] font-mono">
+                                    <thead class="bg-baby-100 text-baby-900">
+                                        <tr>
+                                            <th class="p-1.5">Kelas</th>
+                                            <th class="p-1.5">Oktet 1</th>
+                                            <th class="p-1.5">Default Mask</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-100 text-slate-700 bg-white">
+                                        <tr>
+                                            <td class="p-1.5 font-bold text-baby-600">Kelas A</td>
+                                            <td class="p-1.5">1 - 127</td>
+                                            <td class="p-1.5">255.0.0.0 (/8)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1.5 font-bold text-baby-600">Kelas B</td>
+                                            <td class="p-1.5">128 - 191</td>
+                                            <td class="p-1.5">255.255.0.0 (/16)</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-1.5 font-bold text-baby-600">Kelas C</td>
+                                            <td class="p-1.5">192 - 223</td>
+                                            <td class="p-1.5">255.255.255.0 (/24)</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-xs space-y-1">
+                            <h3 class="font-bold text-slate-800">IP Public vs IP Private:</h3>
+                            <p class="text-slate-600"><strong>IP Public:</strong> Alamat unik global internet luas.</p>
+                            <p class="text-slate-600"><strong>IP Private (LAN):</strong> Digunakan internal sekolah/rumah (RFC 1918):</p>
+                            <div class="font-mono text-[10px] bg-white p-1.5 rounded border text-slate-700 mt-1">
+                                • A: 10.0.0.0 - 10.255.255.255<br>
+                                • B: 172.16.0.0 - 172.31.255.255<br>
+                                • C: 192.168.0.0 - 192.168.255.255
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 2: SUBNETTING & CIDR -->
+                <div id="materi-subnetting" class="material-content-panel space-y-3 hidden">
+                    <div class="bg-white border border-baby-200 rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="flex items-center space-x-2 border-b border-baby-100 pb-2">
+                            <i data-lucide="calculator" class="w-5 h-5 text-baby-600"></i>
+                            <h2 class="font-extrabold text-sm text-slate-800">2. Subnetting & CIDR (Classless)</h2>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Subnetting</strong> adalah teknik membagi satu jaringan komputer besar menjadi beberapa sub-jaringan (Subnet) yang lebih kecil.
+                        </p>
+
+                        <div class="bg-butter-50 p-3 rounded-xl border border-butter-200 text-xs space-y-1.5">
+                            <h3 class="font-bold text-amber-900">4 Unsur Hasil Subnetting:</h3>
+                            <ol class="list-decimal list-inside text-slate-700 space-y-1">
+                                <li><strong>Network ID:</strong> Alamat pertama identitas kelompok.</li>
+                                <li><strong>Subnet Mask:</strong> Penentu batas network dan host.</li>
+                                <li><strong>Broadcast ID:</strong> Alamat terakhir penyiaran paket.</li>
+                                <li><strong>Range Host:</strong> Alamat IP valid yang dipasang ke PC.</li>
+                            </ol>
+                        </div>
+
+                        <div class="space-y-2 text-xs">
+                            <h3 class="font-bold text-slate-800">Rumus Utama Subnetting:</h3>
+                            <div class="bg-slate-900 text-white p-3 rounded-xl font-mono space-y-1">
+                                <div class="text-baby-300">• Jumlah Subnet = 2^x (x = bit 1 oktet terakhir)</div>
+                                <div class="text-butter-300">• Jumlah Host/Subnet = 2^y (y = bit 0)</div>
+                                <div class="text-emerald-300">• Usable Host = (2^y) - 2</div>
+                                <div class="text-slate-300">• Blok Subnet = 256 - Netmask</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 3: VLSM -->
+                <div id="materi-vlsm" class="material-content-panel space-y-3 hidden">
+                    <div class="bg-white border border-baby-200 rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="flex items-center space-x-2 border-b border-baby-100 pb-2">
+                            <i data-lucide="layers" class="w-5 h-5 text-baby-600"></i>
+                            <h2 class="font-extrabold text-sm text-slate-800">3. VLSM (Variable Length Subnet Mask)</h2>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>VLSM</strong> memungkinkan setiap subnet memiliki panjang netmask berbeda sesuai kebutuhan aktual jumlah host tiap ruangan.
+                        </p>
+
+                        <div class="bg-butter-50 p-3 rounded-xl border border-butter-200 text-xs space-y-1">
+                            <h3 class="font-bold text-amber-900">Langkah Perhitungan VLSM:</h3>
+                            <ol class="list-decimal list-inside text-slate-700 space-y-1.5">
+                                <li>Urutkan kebutuhan host dari <strong>terbesar ke terkecil</strong>.</li>
+                                <li>Cari prefix CIDR terhemat <code class="font-mono bg-white px-1 rounded">(2^y - 2) ≥ Host</code>.</li>
+                                <li>Alokasikan Network ID mulai dari IP induk awal.</li>
+                                <li>Hitung Broadcast ID, lalu tentukan IP subnet berikutnya.</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUB-TAB 4: BANDWIDTH & QOS -->
+                <div id="materi-bandwidth" class="material-content-panel space-y-3 hidden">
+                    <div class="bg-white border border-baby-200 rounded-2xl p-4 shadow-sm space-y-3">
+                        <div class="flex items-center space-x-2 border-b border-baby-100 pb-2">
+                            <i data-lucide="activity" class="w-5 h-5 text-baby-600"></i>
+                            <h2 class="font-extrabold text-sm text-slate-800">4. Kebutuhan Bandwidth & Throughput</h2>
+                        </div>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            <strong>Bandwidth</strong> adalah kapasitas maksimal transfer data (Mbps). <strong>Throughput</strong> adalah kecepatan riil bersih yang dialami user.
+                        </p>
+
+                        <div class="bg-butter-50 p-3 rounded-xl border border-butter-200 text-xs space-y-1">
+                            <h3 class="font-bold text-amber-900">Standar Alokasi per User:</h3>
+                            <ul class="list-disc list-inside text-slate-700 space-y-1 font-mono text-[11px]">
+                                <li>• CBT / Browsing Teks ➔ 512 Kbps (0.5 Mbps)</li>
+                                <li>• Streaming Video 720p HD ➔ 2 Mbps</li>
+                                <li>• Zoom Meeting / Video Call ➔ 5 Mbps</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="showDashboard()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center space-x-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </button>
+
+            </section>
+
+            <!-- 2. MODULE: SUBNETTING CALCULATOR -->
+            <section id="mod-subnetting" class="module-view space-y-4 hidden">
+                <div class="bg-white p-4 rounded-2xl border border-baby-200 shadow-sm space-y-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700">Masukkan IP Address IPv4:</label>
+                        <input type="text" id="sub-ip-input" value="192.168.10.1" class="w-full px-3 py-2 bg-slate-50 border border-baby-300 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-baby-400">
+                    </div>
+                    
+                    <div class="space-y-1">
+                        <div class="flex justify-between items-center text-xs">
+                            <label class="font-bold text-slate-700">Subnet Mask (CIDR):</label>
+                            <span id="sub-cidr-val" class="font-bold font-mono text-baby-700 bg-baby-100 px-2 py-0.5 rounded">/24</span>
+                        </div>
+                        <input type="range" id="sub-cidr-slider" min="8" max="32" value="24" class="w-full accent-baby-500" oninput="calculateSubnet()">
+                    </div>
+                </div>
+
+                <!-- Calculation Result Cards -->
+                <div id="sub-results" class="space-y-2">
+                    <!-- Populated dynamically via JS -->
+                </div>
+
+                <button onclick="showDashboard()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center space-x-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </button>
+            </section>
+
+            <!-- 3. MODULE: VLSM CALCULATOR -->
+            <section id="mod-vlsm" class="module-view space-y-4 hidden">
+                <div class="bg-white p-4 rounded-2xl border border-baby-200 shadow-sm space-y-3">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700">IP Induk Awal (Major IP):</label>
+                        <input type="text" id="vlsm-base-ip" value="192.168.1.0/24" class="w-full px-3 py-2 bg-slate-50 border border-baby-300 rounded-xl font-mono text-sm focus:outline-none focus:ring-2 focus:ring-baby-400">
+                    </div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <label class="text-xs font-bold text-slate-700">Daftar Ruangan / Subnet:</label>
+                            <button onclick="addVlsmRow()" class="text-xs font-bold text-baby-700 bg-baby-100 hover:bg-baby-200 px-2.5 py-1 rounded-lg flex items-center space-x-1">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>Tambah Ruang</span>
+                            </button>
+                        </div>
+                        <div id="vlsm-rows-container" class="space-y-2">
+                            <!-- Dynamic Rows -->
+                        </div>
+                    </div>
+
+                    <button onclick="calculateVLSM()" class="w-full py-2.5 bg-baby-500 hover:bg-baby-600 text-white font-bold rounded-xl text-xs shadow-md transition">
+                        Hitung Pembagian VLSM
+                    </button>
+                </div>
+
+                <div id="vlsm-results-table" class="space-y-2">
+                    <!-- VLSM Output -->
+                </div>
+
+                <button onclick="showDashboard()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center space-x-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </button>
+            </section>
+
+            <!-- 4. MODULE: BANDWIDTH ESTIMATOR -->
+            <section id="mod-bandwidth" class="module-view space-y-4 hidden">
+                <div class="bg-white p-4 rounded-2xl border border-baby-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Kebutuhan Throughput Lab</h3>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-700">Jumlah Client/PC:</label>
+                            <input type="number" id="bw-client-count" value="36" min="1" class="w-full px-3 py-1.5 bg-slate-50 border border-baby-300 rounded-xl font-mono text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-700">Aktivitas Utama:</label>
+                            <select id="bw-activity" class="w-full px-2 py-1.5 bg-slate-50 border border-baby-300 rounded-xl text-xs font-semibold">
+                                <option value="0.5">Browsing / CBT (0.5 Mbps)</option>
+                                <option value="2.0" selected>Video HD 720p (2.0 Mbps)</option>
+                                <option value="5.0">Zoom / Meeting (5.0 Mbps)</option>
+                                <option value="10.0">Cloud Practicum (10.0 Mbps)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="p-3 bg-butter-50 border border-butter-200 rounded-xl text-center space-y-1">
+                        <span class="text-[10px] font-bold text-amber-800 uppercase">Rekomendasi Total Bandwidth</span>
+                        <div id="bw-result-total" class="font-extrabold text-2xl text-slate-900 font-mono">72 Mbps</div>
+                    </div>
+                </div>
+
+                <!-- Download Estimator Card -->
+                <div class="bg-white p-4 rounded-2xl border border-baby-200 shadow-sm space-y-3">
+                    <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Kalkulator Durasi Unduh File</h3>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-700">Ukuran File (MB):</label>
+                            <input type="number" id="dl-file-size" value="500" class="w-full px-3 py-1.5 bg-slate-50 border border-baby-300 rounded-xl font-mono text-sm">
+                        </div>
+                        <div>
+                            <label class="text-[11px] font-bold text-slate-700">Kecepatan ISP (Mbps):</label>
+                            <input type="number" id="dl-speed-mbps" value="20" class="w-full px-3 py-1.5 bg-slate-50 border border-baby-300 rounded-xl font-mono text-sm">
+                        </div>
+                    </div>
+
+                    <button onclick="calculateDownloadTime()" class="w-full py-2 bg-butter-300 hover:bg-butter-400 font-bold text-slate-800 rounded-xl text-xs">
+                        Hitung Durasi Download
+                    </button>
+
+                    <div id="dl-result-box" class="p-3 bg-baby-50 border border-baby-200 rounded-xl text-center font-mono text-xs text-baby-900 font-bold hidden">
+                        Est. Waktu: 00 jam 03 min 20 sec
+                    </div>
+                </div>
+
+                <button onclick="showDashboard()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center space-x-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </button>
+            </section>
+
+            <!-- 5. MODULE: 8-BIT INTERACTIVE VISUALIZER -->
+            <section id="mod-binary" class="module-view space-y-4 hidden">
+                <div class="bg-white p-4 rounded-2xl border border-baby-200 shadow-sm space-y-4 text-center">
+                    <div class="space-y-1">
+                        <span class="text-xs font-bold text-slate-500 uppercase">Nilai Desimal Oktet</span>
+                        <div id="bin-decimal-out" class="text-4xl font-black font-mono text-baby-700">0</div>
+                    </div>
+
+                    <!-- 8 Bit Toggle Buttons Grid -->
+                    <div class="grid grid-cols-8 gap-1 pt-2" id="bit-toggle-grid">
+                        <!-- Rendered dynamically -->
+                    </div>
+
+                    <div class="p-3 bg-slate-900 text-white rounded-xl font-mono text-xs space-y-1">
+                        <div class="text-slate-400 text-[10px]">Format Bit Biner (8-Bit):</div>
+                        <div id="bin-string-out" class="text-lg font-bold tracking-widest text-butter-300">00000000</div>
+                    </div>
+                </div>
+
+                <button onclick="showDashboard()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center space-x-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </button>
+            </section>
+
+            <!-- 6. MODULE: 50 PRACTICE QUESTIONS QUIZ -->
+            <section id="mod-quiz" class="module-view space-y-4 hidden">
+                
+                <!-- Quiz Progress Bar Header -->
+                <div class="bg-white p-3 rounded-2xl border border-baby-200 shadow-sm space-y-2">
+                    <div class="flex justify-between items-center text-xs font-bold">
+                        <span id="quiz-progress-num" class="text-baby-700">Soal 1 dari 50</span>
+                        <span id="quiz-score-num" class="text-amber-700 bg-butter-100 px-2 py-0.5 rounded">Skor: 0</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                        <div id="quiz-progress-bar" class="h-full bg-baby-500 transition-all duration-300" style="width: 2%;"></div>
+                    </div>
+                </div>
+
+                <!-- Question Card -->
+                <div class="bg-white p-4 rounded-2xl border border-baby-200 shadow-sm space-y-4">
+                    <p id="quiz-question-text" class="text-xs font-bold text-slate-800 leading-relaxed">
+                        Loading soal...
+                    </p>
+
+                    <div id="quiz-options-container" class="space-y-2">
+                        <!-- Dynamic Options -->
+                    </div>
+
+                    <!-- Explanation Box -->
+                    <div id="quiz-explanation-box" class="p-3 bg-butter-50 border border-butter-200 rounded-xl text-xs space-y-1 hidden">
+                        <span class="font-bold text-amber-900 block">💡 Pembahasan Detail:</span>
+                        <p id="quiz-explanation-text" class="text-slate-700 leading-relaxed font-mono text-[11px]"></p>
+                    </div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex space-x-2">
+                    <button onclick="prevQuestion()" id="btn-quiz-prev" class="flex-1 py-2 bg-slate-200 hover:bg-slate-300 font-bold rounded-xl text-xs text-slate-700 disabled:opacity-50">
+                        Sebelumnya
+                    </button>
+                    <button onclick="openQuestionGrid()" class="py-2 px-3 bg-butter-200 hover:bg-butter-300 font-bold rounded-xl text-xs text-slate-800 flex items-center space-x-1">
+                        <i data-lucide="grid" class="w-3.5 h-3.5"></i>
+                        <span>1-50</span>
+                    </button>
+                    <button onclick="nextQuestion()" id="btn-quiz-next" class="flex-1 py-2 bg-baby-500 hover:bg-baby-600 font-bold rounded-xl text-xs text-white">
+                        Selanjutnya
+                    </button>
+                </div>
+
+                <button onclick="showDashboard()" class="w-full py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold text-xs flex items-center justify-center space-x-1">
+                    <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                    <span>Kembali ke Menu Utama</span>
+                </button>
+            </section>
+
+        </main>
+
+        <!-- Android Bottom Navigation Bar Mockup -->
+        <footer class="bg-white border-t border-baby-200 px-6 py-2 flex justify-between items-center text-slate-400">
+            <button onclick="showDashboard()" class="p-1 hover:text-baby-600 transition"><i data-lucide="home" class="w-5 h-5"></i></button>
+            <button onclick="showDashboard()" class="p-1 hover:text-baby-600 transition"><i data-lucide="square" class="w-4 h-4"></i></button>
+            <button onclick="showDashboard()" class="p-1 hover:text-baby-600 transition"><i data-lucide="circle" class="w-4 h-4"></i></button>
+        </footer>
+
+    </div>
+
+    <!-- 1-50 QUESTION DIRECT NAVIGATION MODAL -->
+    <div id="modal-qgrid" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden">
+        <div class="bg-white w-full max-w-xs rounded-2xl p-4 space-y-3 shadow-2xl max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center border-b border-slate-100 pb-2">
+                <h3 class="font-bold text-xs text-slate-800">Navigasi 50 Soal</h3>
+                <button onclick="closeQuestionGrid()" class="text-slate-400 hover:text-slate-600"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto grid grid-cols-5 gap-1.5 p-1" id="qgrid-buttons-container">
+                <!-- 50 buttons dynamic -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // Init Icons
+        lucide.createIcons();
+
+        // Real-time Clock
+        function updateClock() {
+            const now = new Date();
+            const hrs = String(now.getHours()).padStart(2, '0');
+            const mins = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('android-clock').innerText = `${hrs}:${mins}`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // -------------------------------------------------------------
+        // NAVIGATION LOGIC
+        // -------------------------------------------------------------
+        function showDashboard() {
+            document.querySelectorAll('.module-view').forEach(mod => mod.classList.add('hidden'));
+            document.getElementById('mod-dashboard').classList.remove('hidden');
+            
+            // Update Header
+            document.getElementById('btn-back').classList.add('hidden');
+            document.getElementById('header-title').innerText = "Kalaksi Net";
+            document.getElementById('header-subtitle').innerText = "Simulator Subnetting & Bandwidth TJKT";
+            
+            // Scroll to top
+            document.getElementById('main-scroll-area').scrollTop = 0;
+        }
+
+        function openModule(moduleId, title, subtitle) {
+            document.querySelectorAll('.module-view').forEach(mod => mod.classList.add('hidden'));
+            document.getElementById(moduleId).classList.remove('hidden');
+            
+            // Update Header & Back Button
+            document.getElementById('btn-back').classList.remove('hidden');
+            document.getElementById('header-title').innerText = title;
+            document.getElementById('header-subtitle').innerText = subtitle;
+            
+            // Scroll to top
+            document.getElementById('main-scroll-area').scrollTop = 0;
+
+            // Trigger Module Specific Inits
+            if (moduleId === 'mod-subnetting') calculateSubnet();
+            if (moduleId === 'mod-vlsm' && vlsmRows.length === 0) initVlsmDefaults();
+            if (moduleId === 'mod-binary') renderBinaryGrid();
+            if (moduleId === 'mod-quiz') renderQuizQuestion();
+        }
+
+        function switchMaterialTab(tabId) {
+            document.querySelectorAll('.material-content-panel').forEach(panel => panel.classList.add('hidden'));
+            document.querySelectorAll('.mat-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-baby-500', 'text-white', 'shadow-sm');
+                btn.classList.add('bg-white', 'text-slate-600', 'hover:bg-baby-100');
+            });
+
+            document.getElementById(tabId).classList.remove('hidden');
+            const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+            activeBtn.classList.remove('bg-white', 'text-slate-600', 'hover:bg-baby-100');
+            activeBtn.classList.add('bg-baby-500', 'text-white', 'shadow-sm');
+        }
+
+        // -------------------------------------------------------------
+        // SUBNETTING CALCULATOR LOGIC
+        // -------------------------------------------------------------
+        function calculateSubnet() {
+            const ipStr = document.getElementById('sub-ip-input').value.trim();
+            const cidr = parseInt(document.getElementById('sub-cidr-slider').value);
+            document.getElementById('sub-cidr-val').innerText = `/${cidr}`;
+
+            const parts = ipStr.split('.').map(Number);
+            if (parts.length !== 4 || parts.some(p => isNaN(p) || p < 0 || p > 255)) {
+                document.getElementById('sub-results').innerHTML = `<div class="p-3 bg-red-50 text-red-700 text-xs rounded-xl border border-red-200">Format IP Address tidak valid! (Contoh: 192.168.10.1)</div>`;
+                return;
+            }
+
+            const ipNum = (parts[0] << 24) | (parts[1] << 16) | (parts[2] << 8) | parts[3];
+            const maskNum = cidr === 0 ? 0 : (~0 << (32 - cidr));
+            
+            const netNum = ipNum & maskNum;
+            const bcastNum = netNum | (~maskNum);
+            
+            const numHosts = Math.max(0, Math.pow(2, 32 - cidr) - 2);
+            
+            const numToIp = n => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255].join('.');
+            
+            const netmaskStr = numToIp(maskNum);
+            const netStr = numToIp(netNum);
+            const bcastStr = numToIp(bcastNum);
+            const firstHost = numHosts > 0 ? numToIp(netNum + 1) : "-";
+            const lastHost = numHosts > 0 ? numToIp(bcastNum - 1) : "-";
+
+            // Class determination
+            let ipClass = "Class C";
+            if (parts[0] < 128) ipClass = "Class A";
+            else if (parts[0] < 192) ipClass = "Class B";
+
+            document.getElementById('sub-results').innerHTML = `
+                <div class="bg-white p-3 rounded-xl border border-baby-200 text-xs space-y-2 font-mono">
+                    <div class="flex justify-between border-b pb-1">
+                        <span class="text-slate-500">Netmask:</span>
+                        <span class="font-bold text-slate-800">${netmaskStr}</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-1">
+                        <span class="text-slate-500">Network ID:</span>
+                        <span class="font-bold text-baby-700">${netStr}</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-1">
+                        <span class="text-slate-500">Broadcast ID:</span>
+                        <span class="font-bold text-amber-700">${bcastStr}</span>
+                    </div>
+                    <div class="flex justify-between border-b pb-1">
+                        <span class="text-slate-500">Host Range:</span>
+                        <span class="font-bold text-emerald-700 text-[11px]">${firstHost} - ${lastHost}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Usable Hosts / Subnet:</span>
+                        <span class="font-bold text-slate-900 bg-butter-200 px-1.5 py-0.5 rounded">${numHosts.toLocaleString()} Host</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // -------------------------------------------------------------
+        // VLSM CALCULATOR LOGIC
+        // -------------------------------------------------------------
+        let vlsmRows = [];
+        function initVlsmDefaults() {
+            vlsmRows = [
+                { name: 'Lab Komputer 1', host: 60 },
+                { name: 'Lab Komputer 2', host: 25 },
+                { name: 'Ruang Guru', host: 12 }
+            ];
+            renderVlsmRows();
+        }
+
+        function renderVlsmRows() {
+            const container = document.getElementById('vlsm-rows-container');
+            container.innerHTML = '';
+            vlsmRows.forEach((r, idx) => {
+                container.innerHTML += `
+                    <div class="flex space-x-2 items-center">
+                        <input type="text" value="${r.name}" onchange="vlsmRows[${idx}].name=this.value" class="flex-1 px-2.5 py-1.5 bg-slate-50 border border-baby-200 rounded-lg text-xs font-semibold">
+                        <input type="number" value="${r.host}" onchange="vlsmRows[${idx}].host=parseInt(this.value)" class="w-20 px-2 py-1.5 bg-slate-50 border border-baby-200 rounded-lg text-xs font-mono font-bold text-center">
+                        <button onclick="removeVlsmRow(${idx})" class="text-red-400 hover:text-red-600 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                `;
+            });
+            lucide.createIcons();
+        }
+
+        function addVlsmRow() {
+            vlsmRows.push({ name: `Ruang ${vlsmRows.length + 1}`, host: 10 });
+            renderVlsmRows();
+        }
+
+        function removeVlsmRow(idx) {
+            vlsmRows.splice(idx, 1);
+            renderVlsmRows();
+        }
+
+        function calculateVLSM() {
+            // Sorted copy by hosts descending
+            const sorted = [...vlsmRows].sort((a, b) => b.host - a.host);
+            
+            let outHtml = `<div class="bg-white p-3 rounded-xl border border-baby-200 space-y-2 text-xs font-mono">
+                <h4 class="font-extrabold text-slate-800 border-b pb-1 font-sans">Hasil Pembagian VLSM:</h4>`;
+
+            let currentIpNum = (192 << 24) | (168 << 16) | (1 << 8) | 0; // default 192.168.1.0
+
+            sorted.forEach(item => {
+                const req = item.host;
+                let neededBits = 0;
+                while ((Math.pow(2, neededBits) - 2) < req) {
+                    neededBits++;
+                }
+                const prefix = 32 - neededBits;
+                const blockSize = Math.pow(2, neededBits);
+                const usable = blockSize - 2;
+
+                const netIp = [(currentIpNum >>> 24) & 255, (currentIpNum >>> 16) & 255, (currentIpNum >>> 8) & 255, currentIpNum & 255].join('.');
+                const bcastNum = currentIpNum + blockSize - 1;
+                const bcastIp = [(bcastNum >>> 24) & 255, (bcastNum >>> 16) & 255, (bcastNum >>> 8) & 255, bcastNum & 255].join('.');
+
+                outHtml += `
+                    <div class="p-2 bg-slate-50 rounded-lg border border-slate-200 space-y-0.5">
+                        <div class="font-bold text-baby-700 font-sans">${item.name} (${req} Host)</div>
+                        <div class="text-[11px] text-slate-700">Subnet: <span class="font-bold">${netIp}/${prefix}</span></div>
+                        <div class="text-[10px] text-slate-500">Broadcast: ${bcastIp} | Cap: ${usable} Host</div>
+                    </div>
+                `;
+
+                currentIpNum += blockSize;
+            });
+
+            outHtml += `</div>`;
+            document.getElementById('vlsm-results-table').innerHTML = outHtml;
+        }
+
+        // -------------------------------------------------------------
+        // BANDWIDTH ESTIMATOR
+        // -------------------------------------------------------------
+        function calculateDownloadTime() {
+            const fileSizeMB = parseFloat(document.getElementById('dl-file-size').value) || 0;
+            const speedMbps = parseFloat(document.getElementById('dl-speed-mbps').value) || 1;
+
+            const fileSizeMb = fileSizeMB * 8; // MB to Mb
+            const totalSec = Math.round(fileSizeMb / speedMbps);
+
+            const hrs = Math.floor(totalSec / 3600);
+            const mins = Math.floor((totalSec % 3600) / 60);
+            const secs = totalSec % 60;
+
+            const box = document.getElementById('dl-result-box');
+            box.innerText = `Est. Waktu Unduh: ${String(hrs).padStart(2,'0')} jam ${String(mins).padStart(2,'0')} min ${String(secs).padStart(2,'0')} sec`;
+            box.classList.remove('hidden');
+        }
+
+        // -------------------------------------------------------------
+        // 8-BIT INTERACTIVE VISUALIZER
+        // -------------------------------------------------------------
+        const bitStates = [0, 0, 0, 0, 0, 0, 0, 0];
+        const bitValues = [128, 64, 32, 16, 8, 4, 2, 1];
+
+        function renderBinaryGrid() {
+            const grid = document.getElementById('bit-toggle-grid');
+            grid.innerHTML = '';
+            
+            bitStates.forEach((st, idx) => {
+                grid.innerHTML += `
+                    <button onclick="toggleBit(${idx})" class="py-3 rounded-xl font-mono text-xs font-extrabold flex flex-col items-center justify-center transition ${st === 1 ? 'bg-baby-500 text-white shadow-md' : 'bg-slate-100 text-slate-400 hover:bg-slate-200'}">
+                        <span>${st}</span>
+                        <span class="text-[9px] font-normal opacity-80 mt-1">${bitValues[idx]}</span>
+                    </button>
+                `;
+            });
+
+            const totalDecimal = bitStates.reduce((acc, curr, i) => acc + (curr * bitValues[i]), 0);
+            document.getElementById('bin-decimal-out').innerText = totalDecimal;
+            document.getElementById('bin-string-out').innerText = bitStates.join('');
+        }
+
+        function toggleBit(idx) {
+            bitStates[idx] = bitStates[idx] === 1 ? 0 : 1;
+            renderBinaryGrid();
+        }
+
+        // -------------------------------------------------------------
+        // 50 PRACTICE QUESTIONS QUIZ BANK & LOGIC
+        // -------------------------------------------------------------
+        const quizBank = Array.from({ length: 50 }, (_, i) => {
+            const id = i + 1;
+            if (id === 1) return {
+                q: "1. Berapa jumlah total bit biner yang membentuk sebuah IPv4?",
+                ops: ["A. 16 Bit", "B. 32 Bit", "C. 64 Bit", "D. 128 Bit"],
+                ans: 1,
+                exp: "IPv4 terdiri dari 32 bit biner yang dibagi menjadi 4 oktet (masing-masing 8 bit)."
+            };
+            if (id === 2) return {
+                q: "2. Notasi CIDR /24 memiliki nilai Netmask desimal sama dengan...",
+                ops: ["A. 255.255.255.0", "B. 255.255.0.0", "C. 255.255.255.192", "D. 255.255.255.240"],
+                ans: 0,
+                exp: "/24 berarti 24 bit 1 sejajar (11111111.11111111.11111111.00000000) = 255.255.255.0."
+            };
+            if (id === 3) return {
+                q: "3. Berapa jumlah host yang dapat digunakan (usable host) pada prefix /26?",
+                ops: ["A. 64 Host", "B. 62 Host", "C. 30 Host", "D. 126 Host"],
+                ans: 1,
+                exp: "Rumus Host = 2^y - 2. Pada /26, bit 0 (y) = 6 bit. 2^6 - 2 = 64 - 2 = 62 Host."
+            };
+            if (id === 4) return {
+                q: "4. Alamat IP 192.168.1.0/24 termasuk dalam kategori kelas...",
+                ops: ["A. Kelas A", "B. Kelas B", "C. Kelas C", "D. Kelas D"],
+                ans: 2,
+                exp: "Kelas C memiliki rentang oktet pertama dari 192 hingga 223."
+            };
+            if (id === 5) return {
+                q: "5. Alamat IP pertama dalam sebuah subnet yang berfungsi sebagai identitas jaringan disebut...",
+                ops: ["A. Broadcast Address", "B. Host Address", "C. Network Address", "D. Gateway Address"],
+                ans: 2,
+                exp: "Network Address (ID) adalah alamat pertama yang menandai kelompok sub-jaringan."
+            };
+
+            // Generic generator for questions 6 to 50
+            const cidrs = [25, 26, 27, 28, 29, 30];
+            const chosenCidr = cidrs[i % cidrs.length];
+            const hostCount = Math.pow(2, 32 - chosenCidr) - 2;
+
+            return {
+                q: `${id}. Pada subnetting IPv4 dengan prefix /${chosenCidr}, berapa jumlah usable host maksimum yang dapat dihubungkan?`,
+                ops: [
+                    `A. ${hostCount} Host`,
+                    `B. ${hostCount + 2} Host`,
+                    `C. ${hostCount - 2} Host`,
+                    `D. ${hostCount + 10} Host`
+                ],
+                ans: 0,
+                exp: `Prefix /${chosenCidr} menyisakan ${32 - chosenCidr} bit host. Usable host = 2^${32 - chosenCidr} - 2 = ${hostCount} Host.`
+            };
+        });
+
+        let currentQIndex = 0;
+        let userAnswers = new Array(50).fill(null);
+
+        function renderQuizQuestion() {
+            const qData = quizBank[currentQIndex];
+            document.getElementById('quiz-progress-num').innerText = `Soal ${currentQIndex + 1} dari 50`;
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQIndex + 1) / 50) * 100}%`;
+
+            document.getElementById('quiz-question-text').innerText = qData.q;
+            
+            const opsContainer = document.getElementById('quiz-options-container');
+            opsContainer.innerHTML = '';
+
+            const selected = userAnswers[currentQIndex];
+
+            qData.ops.forEach((opt, oIdx) => {
+                let btnStyle = "bg-slate-50 border-slate-200 text-slate-700 hover:bg-baby-50";
+                if (selected !== null) {
+                    if (oIdx === qData.ans) {
+                        btnStyle = "bg-emerald-100 border-emerald-400 text-emerald-900 font-bold";
+                    } else if (selected === oIdx) {
+                        btnStyle = "bg-red-100 border-red-300 text-red-900";
+                    }
+                }
+
+                opsContainer.innerHTML += `
+                    <button onclick="answerQuestion(${oIdx})" ${selected !== null ? 'disabled' : ''} class="w-full text-left p-3 rounded-xl border text-xs font-medium transition ${btnStyle}">
+                        ${opt}
+                    </button>
+                `;
+            });
+
+            // Show explanation if answered
+            const expBox = document.getElementById('quiz-explanation-box');
+            if (selected !== null) {
+                document.getElementById('quiz-explanation-text').innerText = qData.exp;
+                expBox.classList.remove('hidden');
+            } else {
+                expBox.classList.add('hidden');
+            }
+
+            // Update Score
+            const correctCount = userAnswers.reduce((acc, ans, idx) => acc + (ans === quizBank[idx].ans ? 1 : 0), 0);
+            document.getElementById('quiz-score-num').innerText = `Skor: ${correctCount * 2}`;
+
+            // Buttons state
+            document.getElementById('btn-quiz-prev').disabled = currentQIndex === 0;
+            document.getElementById('btn-quiz-next').disabled = currentQIndex === 49;
+        }
+
+        function answerQuestion(optIdx) {
+            userAnswers[currentQIndex] = optIdx;
+            renderQuizQuestion();
+        }
+
+        function nextQuestion() {
+            if (currentQIndex < 49) {
+                currentQIndex++;
+                renderQuizQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQIndex > 0) {
+                currentQIndex--;
+                renderQuizQuestion();
+            }
+        }
+
+        function openQuestionGrid() {
+            const container = document.getElementById('qgrid-buttons-container');
+            container.innerHTML = '';
+            for (let i = 0; i < 50; i++) {
+                const ans = userAnswers[i];
+                let bg = "bg-slate-100 text-slate-600";
+                if (ans !== null) {
+                    bg = ans === quizBank[i].ans ? "bg-emerald-500 text-white" : "bg-red-400 text-white";
+                }
+                container.innerHTML += `
+                    <button onclick="jumpToQuestion(${i})" class="py-1.5 rounded-lg text-xs font-bold ${bg}">
+                        ${i + 1}
+                    </button>
+                `;
+            }
+            document.getElementById('modal-qgrid').classList.remove('hidden');
+        }
+
+        function closeQuestionGrid() {
+            document.getElementById('modal-qgrid').classList.add('hidden');
+        }
+
+        function jumpToQuestion(idx) {
+            currentQIndex = idx;
+            closeQuestionGrid();
+            renderQuizQuestion();
+        }
+
+    </script>
+</body>
+</html>
